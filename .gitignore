@@ -3,10 +3,12 @@ __pycache__/
 *.py[cod]
 *$py.class
 
-.idea/*
 
 # C extensions
 *.so
+db/yolov5s.pt
+.vscode/
+.idea/
 
 # Distribution / packaging
 .Python

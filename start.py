@@ -1,16 +1,20 @@
-# 这是一个示例 Python 脚本。
+import sys
+from os import path as os_path
 
-# 按 Shift+F10 执行或将其替换为您的代码。
-# 按 双击 Shift 在所有地方搜索类、文件、工具窗口、操作和设置。
+from PyQt5.QtCore import Qt
+from PyQt5.QtWidgets import QApplication
 
+from core.detect_window import QDetectWindow
 
-def print_hi(name):
-    # 在下面的代码行中使用断点来调试脚本。
-    print(f'Hi, {name}')  # 按 Ctrl+F8 切换断点。
+env_path = os_path.join(os_path.dirname(__file__), '..')
+if env_path not in sys.path:
+    sys.path.append(env_path)
 
 
 # 按间距中的绿色按钮以运行脚本。
 if __name__ == '__main__':
-    print_hi('PyCharm')
-
-# 访问 https://www.jetbrains.com/help/pycharm/ 获取 PyCharm 帮助
+    QApplication.setAttribute(Qt.AA_EnableHighDpiScaling)
+    app = QApplication(sys.argv)  # 创建GUI应用程序
+    form = QDetectWindow()  # 创建窗体
+    form.show()
+    sys.exit(app.exec_())
