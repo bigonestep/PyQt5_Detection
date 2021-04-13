@@ -4,7 +4,7 @@ from os import path as os_path
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QApplication
 
-from core.detect_window import QDetectWindow
+from core.welcome_window import QWelcomeWindow
 
 env_path = os_path.join(os_path.dirname(__file__), '..')
 if env_path not in sys.path:
@@ -15,6 +15,6 @@ if env_path not in sys.path:
 if __name__ == '__main__':
     QApplication.setAttribute(Qt.AA_EnableHighDpiScaling)
     app = QApplication(sys.argv)  # 创建GUI应用程序
-    form = QDetectWindow()  # 创建窗体
+    form = QWelcomeWindow()  # 创建窗体
     form.show()
     sys.exit(app.exec_())

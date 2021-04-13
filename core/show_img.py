@@ -1,5 +1,4 @@
 import time
-from os import listdir as os_listdir
 from threading import Thread
 
 import cv2
@@ -7,7 +6,7 @@ from PyQt5.QtGui import QPixmap, QImage
 from PyQt5.QtWidgets import QLabel
 from PyQt5.QtCore import Qt, QSize
 
-from core.tools import plot_one_box
+from core.tools import plot_one_box, cv_put_text
 
 
 class ShowImageThread(Thread):
@@ -28,7 +27,6 @@ class ShowImageThread(Thread):
         # [[[图像次序0， 原始图像， 检测后的标签和坐标{标签：坐标}],[图像次序1， 原始图像， 检测后的标签和坐标{标签：坐标}], ....]]
         # 因此要拿到每一个进程的图像次序需要    self.queue[i][0][0]
         # 拿到一个进程中的图像： self.queue[i][0][1]
-        print(self.queue)
 
         self._isPause = True
         # self.cond = QWaitCondition()
@@ -42,6 +40,11 @@ class ShowImageThread(Thread):
 
     @staticmethod
     def cv2img(cv_img):
+        """
+        将cv2的BGR转成qt使用的RGB
+        :param cv_img: cvBGR图像
+        :return: qt可以展示的图像
+        """
         img_cv_rgb = cv2.cvtColor(cv_img, cv2.COLOR_BGR2RGB)
         img_pyqt = QImage(img_cv_rgb[:], img_cv_rgb.shape[1], img_cv_rgb.shape[0], img_cv_rgb.shape[1] * 3,
                           QImage.Format_RGB888)
@@ -49,7 +52,6 @@ class ShowImageThread(Thread):
         return pixmap
 
     def show(self, cv_img):
-        # 把cv转成qt可以放的格式
 
         w = self.show_img_lbl.width()
         h = self.show_img_lbl.height()
@@ -90,10 +92,12 @@ class ShowImageThread(Thread):
                         synchron_num, _, target = self.queue[i].pop(0)
                         print(synchron_num, "---->", target)
                         # target = {'name': 坐标}
-
+                        names = []
                         for name, xyxy in target.items():
                             if xyxy:
                                 plot_one_box(xyxy,  self.img0, label=name, line_thickness=3)
+                                names.append(name)
+                    self.img0 = cv_put_text(self.img0, names)
                     self.show(self.img0)
                     time.sleep(0.01)
                 print("图片展示环节：{:.2f}".format(time.time() - t0))

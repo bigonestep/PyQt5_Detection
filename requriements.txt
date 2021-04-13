@@ -1,0 +1,5 @@
+conda:
+
+pip:
+ PyQt5
+ opencv-python
