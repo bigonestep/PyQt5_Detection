@@ -16,11 +16,13 @@ from core.detect import DetectProcess
 from core.camera import CameraThread
 from core.show_img import ShowImageThread
 from core.tools import kill_pid
+from core.play_sound import PlaySound
 
 
 class QDetectWindow(QMainWindow):
     def __init__(self, parent=None):
         super().__init__(parent)
+        print("detect window pid:", os.getpid())
         self.parent = parent   # 获取上一个界面的对象
         ui_file_path = os.path.join(os.path.dirname(__file__), '../lib/AppQt/detectwindow.ui')
         loadUi(ui_file_path, self)
@@ -43,13 +45,17 @@ class QDetectWindow(QMainWindow):
         self.img_queue = []
         self.target_queue = []
         self.create_queue()
-
+        # ---------------------初始化 声音播放 -------------------
+        self.playsound_thread = PlaySound()
+        self.playsound_thread.daemon = True
+        self.playsound_thread.start()
         # ---------------------------- 显示线程对象和 ----------------------------
         self.camera_thread = None
         self.camera_task_thread()  # 初始化显示线程
         # ----------------------摄像机线程对象--------------------------
         self.show_img_thread = None
         self.show_image_thread()  # 初始化摄像机线程
+
 
     def create_queue(self):
         for i in range(self.process_num):
@@ -93,6 +99,7 @@ class QDetectWindow(QMainWindow):
         """
         time.sleep(0.1)
         self.detect_task_process(task)     # 开启yolo进程
+        self.playsound_thread.resume()
         self.camera_thread.resume()        # 唤醒摄像机线程
         self.show_img_thread.resume()      # 唤醒显示线程
         for i in range(self.process_num):
@@ -111,8 +118,12 @@ class QDetectWindow(QMainWindow):
                     kill_pid(self.process_list[i].pid)     # 杀死了进程。
                     self.process_list[i] = None            # 将进程对象置为None，方便系统回收
             # 暂停线程
+            if self.playsound_thread is not None:
+                self.playsound_thread.pause()
             if self.camera_thread is not None:
                 self.camera_thread.pause()     # 睡眠摄像机线程
+            if self.show_img_thread is not None:
+                self.show_img_thread.pause()
             for i in range(len(self.target_queue)):  # 倘若队列中还有数据则清空
                 while not self.target_queue[i].empty():
                     self.target_queue.acquire()
@@ -123,6 +134,7 @@ class QDetectWindow(QMainWindow):
         self.close_process()       # 关闭窗口则关闭进程
         self.parent.current_btn = -1   # 把按钮标志设置为  -1
         super().closeEvent(event)
+
 
     # def resizeEvent(self, QResizeEvent):
     #     print('窗口变化', QResizeEvent.size())

@@ -1,11 +1,10 @@
 import random
 import sys
-
 import cv2
 import os
-from yaml import load, FullLoader
-
 import numpy as np
+
+from yaml import load, FullLoader
 
 yaml_file_path = os.path.join(os.path.dirname(__file__), '../conf/classes.yaml')  # 配置文件的路径
 
@@ -31,7 +30,9 @@ def get_yaml_data(yaml_file):
         return None
 
 
-label_text = get_yaml_data(yaml_file_path)["names"]   # 在导入该文件的时候执行，获取配置文件分类
+yaml = get_yaml_data(yaml_file_path)
+label_text = yaml["names"]  # 在导入该文件的时候执行，获取配置文件分类
+mp3_path = yaml["mp3path"]
 
 
 def plot_one_box(x, img, color=None, label=None, line_thickness=None):
@@ -95,23 +96,25 @@ def cv_put_text(img0, names):
         for name in names:
             text += label_text[int(name)] + "  "  # 先拼接所有的标签文字
     # text = "person  cell phone  img_height"
-    img_height, img_width, _ = img0.shape   # 获取图像的长宽
-    font = cv2.FONT_HERSHEY_SIMPLEX   # 设置字体
+    img_height, img_width, _ = img0.shape  # 获取图像的长宽
+    font = cv2.FONT_HERSHEY_SIMPLEX  # 设置字体
     # 480, 640, 3
     # 先获取文本框大小
     # 文字，字体，字体大小，粗细
-    text_width, text_height = cv2.getTextSize(text, font, 1, 2)[0]   # 获取文字框的大小，方便调整文字在图像中的位置
+    text_width, text_height = cv2.getTextSize(text, font, 1, 2)[0]  # 获取文字框的大小，方便调整文字在图像中的位置
     print("text_size", text_width, text_height)
     # 各参数依次是：照片/添加的文字/左上角坐标/字体/字体大小/颜色/字体粗细
-    x = img_height * 3 // 4      # 计算出文字在图像中的位置     长为图像靠下的四分之三位置
-    y = (img_width - text_width) // 2         # 宽度居中
+    x = img_height * 3 // 4  # 计算出文字在图像中的位置     长为图像靠下的四分之三位置
+    y = (img_width - text_width) // 2  # 宽度居中
 
-    img0_ndarray = np.array(img0)    # 把图像转为numpy，方便直接赋值，产生背景
+    img0_ndarray = np.array(img0)  # 把图像转为numpy，方便直接赋值，产生背景
 
     img0_ndarray[x - text_height - text_height: x + text_height,
     y - y // 2: y + text_width + y // 2,
-    :] = [27, 0, 221]    # 将文字的背景设置红色
+    :] = [27, 0, 221]  # 将文字的背景设置红色
     # print("----------------",type(img0_ndarray.tolist()))
     img0 = cv2.putText(img0_ndarray.astype(np.uint8), text, ((img_width - text_width) // 2, img_height * 3 // 4), font,
-                       1, (255, 255, 255), 3)   # 设置文字
-    return img0
+                       1, (255, 255, 255), 3)  # 设置文字
+    return img0, text
+
+

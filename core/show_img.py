@@ -97,9 +97,15 @@ class ShowImageThread(Thread):
                             if xyxy:
                                 plot_one_box(xyxy,  self.img0, label=name, line_thickness=3)
                                 names.append(name)
-                    self.img0 = cv_put_text(self.img0, names)
+                                print(names)
+                    self.img0, names_text = cv_put_text(self.img0, names)
+                    # if not self.ui_obj.playsound.is_playing
                     self.show(self.img0)
+                    print(names[0])
+                    if names_text:
+                        self.ui_obj.playsound_thread.label_text = names_text
                     time.sleep(0.01)
                 print("图片展示环节：{:.2f}".format(time.time() - t0))
             else:
+                print("展示图片睡眠啦")
                 time.sleep(0.1)

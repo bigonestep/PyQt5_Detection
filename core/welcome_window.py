@@ -11,7 +11,7 @@ from PyQt5.QtCore import Qt
 
 from PyQt5.QtWidgets import QApplication, QMainWindow
 from core.detect_window import QDetectWindow
-
+from core.tools import kill_pid
 
 class QWelcomeWindow(QMainWindow):
     def __init__(self, parent=None):
@@ -26,7 +26,7 @@ class QWelcomeWindow(QMainWindow):
         ui_file_path = os.path.join(os.path.dirname(__file__), '../lib/AppQt/welcomewindow.ui')
         loadUi(ui_file_path, self)
         self.ui = self
-        # self.ui.resize(self.screen_width, self.screen_height)    # 设置软件启动为全屏
+        self.ui.resize(self.screen_width, self.screen_height)    # 设置软件启动为全屏
 
         self.main_detect_window = None   # 初始化检测界面类为None
         # ----------------------------四个检测任务按钮的槽函数------------------------------------
@@ -112,6 +112,7 @@ class QWelcomeWindow(QMainWindow):
     # ============ 事件处理 =============================
     # 窗口关闭
     def closeEvent(self, event):
+        # pass
         super().closeEvent(event)
 
     # def resizeEvent(self, QResizeEvent):
@@ -128,8 +129,10 @@ class QWelcomeWindow(QMainWindow):
 
 #  ============窗体测试程序 ================================
 if __name__ == "__main__":  # 用于当前窗体测试
+    print(os.getpid())
     QApplication.setAttribute(Qt.AA_EnableHighDpiScaling)
     app = QApplication(sys.argv)  # 创建GUI应用程序
     form = QWelcomeWindow()  # 创建窗体
     form.show()
     sys.exit(app.exec_())
+
