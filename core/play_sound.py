@@ -6,7 +6,6 @@
 # @Software: PyCharm
 import time
 from threading import Thread
-
 import pyttsx3
 from core.tools import mp3_path
 
@@ -23,7 +22,8 @@ engine.runAndWait()
 
 class PlaySound(Thread):
     def __init__(self):
-        super().__init__()
+        super(PlaySound, self).__init__()
+        self.setName("PlaySound")
         self.is_playing = False
         self.mp3_path = mp3_path
         self.engine = pyttsx3.init()

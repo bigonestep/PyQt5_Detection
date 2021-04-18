@@ -17,6 +17,7 @@ class CameraThread(QThread):
     """
     def __init__(self, ui_obj, img_queue, src=0):
         super(CameraThread, self).__init__()
+        # self.setName("CameraThread")
         self.img_queue = img_queue   # 将获取图像送给检测进程的队列，由于检测进程可能有多个因此该处为队列
         self.frame = None
         self.status = None

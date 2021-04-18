@@ -26,7 +26,7 @@ class QWelcomeWindow(QMainWindow):
         ui_file_path = os.path.join(os.path.dirname(__file__), '../lib/AppQt/welcomewindow.ui')
         loadUi(ui_file_path, self)
         self.ui = self
-        self.ui.resize(self.screen_width, self.screen_height)    # 设置软件启动为全屏
+        # self.ui.resize(self.screen_width, self.screen_height)    # 设置软件启动为全屏
 
         self.main_detect_window = None   # 初始化检测界面类为None
         # ----------------------------四个检测任务按钮的槽函数------------------------------------

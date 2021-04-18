@@ -12,7 +12,8 @@ from core.tools import plot_one_box, cv_put_text
 class ShowImageThread(Thread):
     def __init__(self, ui_obj, target_queue):
         # 初始化展示图片的窗口
-        super().__init__()
+        super(ShowImageThread, self).__init__()
+        self.setName("ShowImageThread")
         self.ui_obj = ui_obj
         self.target_queue = target_queue
         self.show_img_lbl = QLabel(ui_obj)
